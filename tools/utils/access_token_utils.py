@@ -1,12 +1,13 @@
 import logging
+import os
 import time
 from fastapi import HTTPException, Request, Response, status
-from decouple import config
+import config
 import jwt
 
 # .env variables
-JWT_ALGORITHM = config("JWT_ALGORITHM")
-JWT_SECRET = config("JWT_SECRET")
+JWT_ALGORITHM = config.JWT_ALGORITHM
+JWT_SECRET = os.getenv("JWT_SECRET")
 
 
 class AccessTokenUtils:
