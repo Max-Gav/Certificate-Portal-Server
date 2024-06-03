@@ -8,11 +8,19 @@ from settings import Settings
 from routers.certificate import certificate_router
 from routers.user import user_router
 from db.db import MongoConnector
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Certmax")
 settings = Settings()
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:     %(message)s')
+
+app.add_middleware(CORSMiddleware,
+                   allow_origins=settings.allow_origins,
+                   allow_credentials=settings.allow_credentials,
+                   allow_methods=settings.allow_methods,
+                   allow_headers=settings.allow_headers, )
+
 
 def setup_routers():
     web_router = APIRouter()
