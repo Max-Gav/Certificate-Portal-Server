@@ -38,3 +38,14 @@ class UserService:
         self.set_access_token(response=response, user_id=user_id, user_role=user_role)
 
         return True
+
+    # Service for registering a new user to the database
+    async def user_registration(self, response: Response, user: User) -> bool:
+        user.password = await self.password_utils.encrypt_base64_password(user.password)
+        user_id = await self._repo.create_user_in_database(user)
+
+        user_id = str(user_id)
+        user_role = "user"
+        self.set_access_token(response=response, user_id=user_id, user_role=user_role)
+
+        return True
