@@ -16,10 +16,11 @@ class UserService:
     # Helper function to set a new access token in the response
     def set_access_token(self, response: Response, user_id: str, user_role: str) -> None:
         new_access_token = self.access_token_utils.create_access_token(user_id=user_id, user_role=user_role)
+
         self.access_token_utils.set_access_token_in_cookies(response=response, access_token=new_access_token)
 
     # Service for checking login details
-    async def login_check(self, response: Response, user: User) -> bool:
+    async def login_user(self, response: Response, user: User) -> bool:
         user_from_db = await self._repo.find_user_in_database(user)
 
         if user_from_db is None:
@@ -29,7 +30,7 @@ class UserService:
             )
         try:
             is_same_password = await self.password_utils.compare_password(user.password, user_from_db.get("password"))
-        except binascii.Error:
+        except (UnicodeDecodeError, binascii):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password is not encoded using base64.")
         if not is_same_password:
             raise HTTPException(
@@ -47,7 +48,7 @@ class UserService:
     async def user_registration(self, response: Response, user: User) -> bool:
         try:
             user.password = await self.password_utils.encrypt_base64_password(user.password)
-        except UnicodeDecodeError:
+        except (UnicodeDecodeError, binascii):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password encoding is not valid.")
         user_id = await self._repo.create_user_in_database(user)
 
