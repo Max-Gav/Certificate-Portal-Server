@@ -1,3 +1,5 @@
+import binascii
+
 from routers.user.repo import UserRepo
 from models.user_models import User
 from tools.utils.password_utils import PasswordUtils
@@ -25,8 +27,10 @@ class UserService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found"
             )
-
-        is_same_password = await self.password_utils.compare_password(user.password, user_from_db.get("password"))
+        try:
+            is_same_password = await self.password_utils.compare_password(user.password, user_from_db.get("password"))
+        except binascii.Error:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password is not encoded using base64.")
         if not is_same_password:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -41,7 +45,10 @@ class UserService:
 
     # Service for registering a new user to the database
     async def user_registration(self, response: Response, user: User) -> bool:
-        user.password = await self.password_utils.encrypt_base64_password(user.password)
+        try:
+            user.password = await self.password_utils.encrypt_base64_password(user.password)
+        except UnicodeDecodeError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password encoding is not valid.")
         user_id = await self._repo.create_user_in_database(user)
 
         user_id = str(user_id)
