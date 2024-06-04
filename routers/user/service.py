@@ -1,7 +1,7 @@
 import binascii
 
 from routers.user.repo import UserRepo
-from models.user_models import User
+from models.user_route_models.user import User
 from tools.utils.password_utils import PasswordUtils
 from tools.utils.access_token_utils import AccessTokenUtils
 from fastapi import Request, Response, HTTPException, status

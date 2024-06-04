@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Response, status
-from models.user_models import User
+from models.user_route_models.user import User
 from routers.user.service import UserService
 from fastapi.responses import JSONResponse
 

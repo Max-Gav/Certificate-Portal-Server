@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from starlette import status
 
 from db.db import MongoConnector
-from models.user_models import User
+from models.user_route_models.user import User
 from pymongo.errors import DuplicateKeyError
 from bson.objectid import ObjectId
 class UserRepo:
