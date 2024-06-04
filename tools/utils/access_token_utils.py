@@ -1,12 +1,12 @@
-import logging
 import os
 import time
 from fastapi import HTTPException, Request, Response, status
-import config
 import jwt
+from settings import Settings
 
 # .env variables
-JWT_ALGORITHM = config.JWT_ALGORITHM
+settings = Settings()
+JWT_ALGORITHM = settings.jwt_algorithm
 JWT_SECRET = os.getenv("JWT_SECRET")
 
 
@@ -18,7 +18,7 @@ class AccessTokenUtils:
             "role": user_role,
             "expiry": time.time() + 600
         }
-        token = jwt.encode(payload, key=JWT_SECRET, algorithm=JWT_ALGORITHM)
+        token = jwt.encode(payload=payload, key=JWT_SECRET, algorithm=JWT_ALGORITHM)
         return token
 
     # Decode an access token
@@ -48,7 +48,7 @@ class AccessTokenUtils:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                 detail={"Error": "Access token not found"})
 
-        decoded_access_token = self.decode_access_token(access_token)
+        decoded_access_token = self.decode_access_token(token=access_token)
         return decoded_access_token
 
     # except HTTPException as error:
@@ -61,4 +61,4 @@ class AccessTokenUtils:
 
     # Set the access token in the response cookies
     def set_access_token_in_cookies(self, response: Response, access_token: str):
-        response.set_cookie('access-token', access_token, max_age=6000, httponly=True, secure=True, samesite='none')
+        response.set_cookie(key='access-token', value=access_token, max_age=6000)
