@@ -45,7 +45,7 @@ class UserService:
         return True
 
     # Service for registering a new user to the database
-    async def user_registration(self, response: Response, user: User) -> bool:
+    async def register_user(self, response: Response, user: User) -> bool:
         try:
             user.password = await self.password_utils.encrypt_base64_password(user.password)
         except (UnicodeDecodeError, binascii.Error):
