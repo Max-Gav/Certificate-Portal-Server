@@ -4,7 +4,7 @@ from routers.user.repo import UserRepo
 from models.user_route_models.user import User
 from tools.utils.password_utils import PasswordUtils
 from tools.utils.access_token_utils import AccessTokenUtils
-from fastapi import Request, Response, HTTPException, status
+from fastapi import Response, HTTPException, status
 
 
 class UserService:
@@ -30,7 +30,7 @@ class UserService:
             )
         try:
             is_same_password = await self.password_utils.compare_password(user.password, user_from_db.get("password"))
-        except (UnicodeDecodeError, binascii):
+        except (UnicodeDecodeError, binascii.Error):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password is not encoded using base64.")
         if not is_same_password:
             raise HTTPException(
@@ -48,7 +48,7 @@ class UserService:
     async def user_registration(self, response: Response, user: User) -> bool:
         try:
             user.password = await self.password_utils.encrypt_base64_password(user.password)
-        except (UnicodeDecodeError, binascii):
+        except (UnicodeDecodeError, binascii.Error):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password encoding is not valid.")
         user_id = await self._repo.create_user_in_database(user)
 
