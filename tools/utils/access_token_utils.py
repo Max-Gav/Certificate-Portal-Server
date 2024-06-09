@@ -49,3 +49,7 @@ class AccessTokenUtils:
     # Set the access token in the response cookies
     def set_access_token_in_cookies(self, response: Response, access_token: str):
         response.set_cookie(key='access-token', value=access_token, max_age=6000)
+
+    # Remove the access token from the cookies
+    def remove_access_token_from_cookies(self, response: Response):
+        response.delete_cookie(key='access-token')

@@ -16,4 +16,8 @@ async def login_user(request: Request, response: Response, user: User):
 async def register_user(request: Request, response: Response, user: User):
     await UserService().user_registration(response=response, user=user)
 
-    return {"message": "Successfully created an user."},
+@router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout_user(response: Response):
+    UserService().logout_user(response=response)
+
+    return {"message": "Successfully logged out the user."}

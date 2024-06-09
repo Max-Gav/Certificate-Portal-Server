@@ -57,3 +57,6 @@ class UserService:
         self.set_access_token(response=response, user_id=user_id, user_role=user_role)
 
         return True
+
+    def logout_user(self, response: Response):
+        self.access_token_utils.remove_access_token_from_cookies(response)
