@@ -2,10 +2,10 @@ import os
 import aiobcrypt
 import base64
 
-pepper_secret = os.getenv("PEPPER_SECRET")
 
 # Class that provides password utilities for checking, encoding, etc.
 class PasswordUtils:
+    pepper_secret = os.getenv("PEPPER_SECRET")
 
     # Check password length
     def is_password_length_valid(self, password: str):
