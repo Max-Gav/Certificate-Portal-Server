@@ -1,6 +1,6 @@
 import binascii
 
-from routers.user.repo import UserRepo
+from routers.user.user_repo import UserRepo
 from models.user_route_models.user import User
 from tools.utils.password_utils import PasswordUtils
 from tools.utils.access_token_utils import AccessTokenUtils
