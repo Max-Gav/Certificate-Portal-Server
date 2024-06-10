@@ -4,24 +4,27 @@ from fastapi import HTTPException, Request, Response, status
 import jwt
 from settings import Settings
 
-# .env variables
+# .env variables/ Constants
 settings = Settings()
 JWT_ALGORITHM = settings.jwt_algorithm
 JWT_SECRET = os.getenv("JWT_SECRET")
+EXPIRY_TIME_MINUTES = 10
+EXPIRY_TIME = EXPIRY_TIME_MINUTES * 60  # Seconds
+
 
 # Class that provides access token utilities for creating, encoding, etc.
 class AccessTokenUtils:
-    # Build a access token payload
-    def access_token_payload_builder(self, user_id: str, user_role: str, expiry_time: int):
+    # Build an access token payload
+    def access_token_payload_builder(self, user_id: str, user_role: str):
         return {
             "id": user_id,
             "role": user_role,
-            "expiry": time.time() + expiry_time
+            "expiry": time.time() + EXPIRY_TIME
         }
 
     # Create a new token
     def create_access_token(self, user_id: str, user_role: str) -> str:
-        payload = self.access_token_payload_builder(user_id, user_role, 600)
+        payload = self.access_token_payload_builder(user_id, user_role)
         token = jwt.encode(payload=payload, key=JWT_SECRET, algorithm=JWT_ALGORITHM)
         return token
 
@@ -36,7 +39,6 @@ class AccessTokenUtils:
 
     # Return the access token data
     def get_access_token_data(self, request: Request):
-        # try:
         access_token = self.get_access_token_from_cookies(request)
 
         if access_token is None:
@@ -48,8 +50,9 @@ class AccessTokenUtils:
 
     # Set the access token in the response cookies
     def set_access_token_in_cookies(self, response: Response, access_token: str):
-        response.set_cookie(key='access-token', value=access_token, max_age=6000)
+        response.set_cookie(key='access-token', value=access_token, httponly=True, secure=True, samesite='none',
+                            max_age=EXPIRY_TIME)
 
     # Remove the access token from the cookies
     def remove_access_token_from_cookies(self, response: Response):
-        response.delete_cookie(key='access-token')
+        response.delete_cookie(key='access-token', httponly=True, secure=True, samesite='none')
