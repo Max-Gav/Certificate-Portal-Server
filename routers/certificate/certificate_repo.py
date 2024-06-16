@@ -5,15 +5,17 @@ from db.db import MongoConnector
 from models.certificate_route_models.certificate import Certificate
 from pymongo.errors import DuplicateKeyError
 from bson.objectid import ObjectId
-
+from tools.utils.general_utils import GeneralUtils
 
 class CertificateRepo:
     def __init__(self):
         self.db = MongoConnector().db
+        self.general_utils = GeneralUtils()
 
     async def find_all_user_certificates(self, user_id: str) -> list:
-        user_certificates = await self.db["certificates"].find({"user_id": user_id}, {"_id": 0}).to_list(length=None)
-
+        user_certificates = await self.db["certificates"].find({"user_id": user_id}).to_list(length=None)
+        for certificate in user_certificates:
+            self.general_utils.convert_object_id_to_str(certificate)
         return user_certificates
 
     # Function that creates a certificate from scratch,
