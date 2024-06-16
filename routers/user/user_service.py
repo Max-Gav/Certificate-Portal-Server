@@ -1,10 +1,11 @@
 import binascii
 
+from models.common.token_payload import TokenPayload
 from routers.user.user_repo import UserRepo
 from models.user_route_models.user import User, BaseUser
 from tools.utils.password_utils import PasswordUtils
 from tools.utils.access_token_utils import AccessTokenUtils
-from fastapi import Response, HTTPException, status
+from fastapi import Response, HTTPException, status, Request
 
 
 class UserService:
@@ -20,8 +21,14 @@ class UserService:
         self.access_token_utils.set_access_token_in_cookies(response=response, access_token=new_access_token)
 
     # Service for checking login details
-    async def login_user(self, response: Response, user: User) -> bool:
-        user_from_db = await self._repo.find_user_in_database(user)
+
+    def me(self, request: Request) -> TokenPayload:
+        token_payload = self.access_token_utils.get_access_token_payload(request=request)
+        if token_payload:
+            return token_payload
+        else:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     async def login_user(self, response: Response, base_user: BaseUser) -> bool:
         user_from_db = await self._repo.find_user_in_database(base_user)
 

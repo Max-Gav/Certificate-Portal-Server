@@ -26,3 +26,8 @@ async def logout_user(response: Response):
     UserService().logout_user(response=response)
 
     return "Successfully logged out the user."
+
+
+@router.get("/me", status_code=status.HTTP_200_OK)
+async def me(request: Request) -> TokenPayload:
+    return UserService().me(request=request)
