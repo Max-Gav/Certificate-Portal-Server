@@ -13,14 +13,14 @@ router = APIRouter(prefix="/certificate")
 @router.get("/get", status_code=status.HTTP_200_OK)
 async def get_certificates(
         payload: Annotated[
-            TokenPayload, Depends(AccessTokenUtils().access_token_payload_middleware)]):
+            TokenPayload, Depends(AccessTokenUtils())]):
     return await CertificateService().get_certificates(payload=payload)
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
 async def create_user_certificate(base_certificate: BaseCertificate,
                                   payload: Annotated[
-                                      TokenPayload, Depends(AccessTokenUtils().access_token_payload_middleware)]):
+                                      TokenPayload, Depends(AccessTokenUtils())]):
     await CertificateService().create_certificate(base_certificate=base_certificate, payload=payload)
     return "Created user certificate."
 
@@ -28,6 +28,6 @@ async def create_user_certificate(base_certificate: BaseCertificate,
 @router.post("/add", status_code=status.HTTP_201_CREATED)
 async def add_user_certificate(base_certificate: BaseCertificate,
                                payload: Annotated[
-                                   TokenPayload, Depends(AccessTokenUtils().access_token_payload_middleware)]):
+                                   TokenPayload, Depends(AccessTokenUtils())]):
     await CertificateService().add_certificate(base_certificate=base_certificate, payload=payload)
     return "Added user certificate."

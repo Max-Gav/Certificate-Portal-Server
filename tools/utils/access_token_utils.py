@@ -33,7 +33,7 @@ def decode_access_token(token: str):
 # Class that provides access token utilities for creating, encoding, etc.
 class AccessTokenUtils:
     # Access token payload middleware
-    def access_token_payload_middleware(self, request: Request) -> TokenPayload:
+    def __call__(self, request: Request) -> TokenPayload:
         try:
             payload = self.get_access_token_payload(request=request)
 
