@@ -15,7 +15,7 @@ class UserRepo:
 
     async def create_user_in_database(self, user: User) -> ObjectId:
         try:
-            new_user_details = await self.db["users"].insert_one(user.__dict__)
+            new_user_details = await self.db["users"].insert_one(user.model_dump())
             return new_user_details.inserted_id
         except DuplicateKeyError:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User is already taken.")
