@@ -19,3 +19,13 @@ class CertificateService:
     async def add_certificate(self, base_certificate: BaseCertificate, payload: TokenPayload):
         certificate = Certificate(user_id=payload["id"], **(base_certificate.model_dump()))
         await self._repo.add_certificate_in_database(certificate=certificate)
+
+    async def edit_certificate(self, edit_certificate: BaseCertificate, payload: TokenPayload):
+        certificate = Certificate(user_id=payload["id"], **(edit_certificate.model_dump()))
+        await self._repo.edit_certificate(certificate=certificate)
+
+    async def delete_cert(self, cert_id: str, payload: TokenPayload):
+         print("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
+         certificate = await self._repo.delete_cert(cert_id, payload["id"])
+         return certificate
+
