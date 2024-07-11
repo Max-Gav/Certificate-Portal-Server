@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class BaseCertificate(BaseModel):
+    cert_name: str
     common_name: str
     subject_alternative_names: list[str]
     expiration_date: datetime

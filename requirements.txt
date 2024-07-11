@@ -1,0 +1,10 @@
+aiobcrypt==3.2.0.post1
+fastapi==0.111.0
+motor==3.4.0
+pydantic==2.8.2
+pydantic_settings==2.3.4
+PyJWT==2.8.0
+PyJWT==2.8.0
+pymongo==4.6.1
+starlette==0.37.2
+uvicorn==0.30.1
