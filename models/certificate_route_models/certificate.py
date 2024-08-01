@@ -12,3 +12,7 @@ class BaseCertificate(BaseModel):
 class Certificate(BaseCertificate):
     user_id: str
 
+
+class EditCertificate(BaseModel):
+    certificate_id: str
+    cert_name: str
