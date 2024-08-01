@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container at /app
 COPY . .
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
+# Make port available to the world outside this container
+EXPOSE 9000
 
 # Run the FastAPI server using Uvicorn
-CMD ["python", "app.py"]
+CMD ["python", "main.py"]

@@ -31,14 +31,14 @@ def setup_routers():
 
 
 @app.on_event("startup")
-def startup_db_client():
-    asyncio.get_event_loop().set_debug(True)
+def startup():
+    asyncio.get_event_loop().set_debug(settings.is_dev)
     MongoConnector().init(mongodb_uri=os.getenv("MONGODB_URI"), db_name=os.getenv("DB_NAME"))
     setup_routers()
 
 
 @app.on_event("shutdown")
-def shutdown_db_client():
+def shutdown():
     MongoConnector().close_connection()
 
 
