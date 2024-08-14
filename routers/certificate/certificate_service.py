@@ -52,8 +52,8 @@ class CertificateService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No matching certificate found to "
                                                                               "edit.")
 
-    async def delete_certificate(self, delete_certificate: DeleteCertificate, payload: TokenPayload) -> None:
-        certificate_id = ObjectId(delete_certificate.certificate_id)
+    async def delete_certificate(self, delete_certificate_data: DeleteCertificate, payload: TokenPayload) -> None:
+        certificate_id = ObjectId(delete_certificate_data.certificate_id)
         user_id = payload["id"]
 
         delete_user_result = await self._repo.delete_certificate(certificate_id, user_id)
