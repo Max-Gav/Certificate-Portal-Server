@@ -10,9 +10,6 @@ from routers.user import user_router
 from db.db import MongoConnector
 from fastapi.middleware.cors import CORSMiddleware
 
-from tools.rabbitmq.rabbitmq_manager import RabbitMQManager
-from tools.rabbitmq.rabbitmq_utils import RabbitMQUtils
-
 app = FastAPI(title="Certmax")
 settings = Settings()
 
@@ -41,15 +38,10 @@ async def startup():
 
     setup_routers()
 
-    RabbitMQManager().init(host=settings.rabbitmq_host)
-    await RabbitMQManager().connect()
-    await RabbitMQUtils().setup_consumer()
-
 
 @app.on_event("shutdown")
 async def shutdown():
     MongoConnector().close_connection()
-    await RabbitMQManager().close()
 
 
 if __name__ == "__main__":

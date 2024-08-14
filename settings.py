@@ -15,5 +15,3 @@ class Settings(BaseSettings):
     allow_credentials: bool = True
     allow_headers: List[str] = ["*"]
     jwt_algorithm: str = "HS256"
-    rabbitmq_host: str = os.getenv("RABBITMQ_HOST")
-
