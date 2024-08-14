@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, status, Depends
 
-from models.certificate_route_models.certificate import BaseCertificate, EditCertificate
+from models.certificate_route_models.certificate import BaseCertificate, EditCertificate, DeleteCertificate
 from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_service import CertificateService
 from tools.utils.access_token_utils import AccessTokenUtils
@@ -41,7 +41,7 @@ async def edit_certificate_details(edit_certificate: EditCertificate, payload: A
 
 
 @router.delete("/delete", status_code=status.HTTP_200_OK)
-async def delete_certificate(certificate_id: str, payload: Annotated[
+async def delete_certificate(delete_certificate: DeleteCertificate, payload: Annotated[
                              TokenPayload, Depends(AccessTokenUtils())]) -> str:
-    await CertificateService().delete_certificate(certificate_id, payload=payload)
+    await CertificateService().delete_certificate(delete_certificate, payload=payload)
     return "Deleted user certificate."

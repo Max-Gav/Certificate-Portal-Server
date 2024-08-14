@@ -2,7 +2,8 @@ import os
 
 import httpx
 from fastapi import HTTPException, status
-from models.certificate_route_models.certificate import EditCertificate, BaseCertificate, Certificate, FullCertificate
+from models.certificate_route_models.certificate import EditCertificate, BaseCertificate, Certificate, FullCertificate, \
+    DeleteCertificate
 from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_repo import CertificateRepo
 from tools.utils.access_token_utils import AccessTokenUtils
@@ -52,8 +53,8 @@ class CertificateService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No matching certificate found to "
                                                                               "edit.")
 
-    async def delete_certificate(self, certificate_id: str, payload: TokenPayload) -> None:
-        certificate_id = ObjectId(certificate_id)
+    async def delete_certificate(self, delete_certificate: DeleteCertificate, payload: TokenPayload) -> None:
+        certificate_id = ObjectId(delete_certificate.certificate_id)
         user_id = payload["id"]
 
         delete_user_result = await self._repo.delete_certificate(certificate_id, user_id)

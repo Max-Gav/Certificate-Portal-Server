@@ -27,3 +27,7 @@ class FullCertificate(Certificate):
 class EditCertificate(BaseModel):
     certificate_id: str
     cert_name: str
+
+
+class DeleteCertificate(BaseModel):
+    certificate_id: str
