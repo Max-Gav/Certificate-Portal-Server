@@ -18,10 +18,13 @@ async def get_certificates(
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_certificate(base_certificate: BaseCertificate,
+async def create_certificate(base_certificate: BaseCertificate, background_tasks: BackgroundTasks,
                              payload: Annotated[
-                                 TokenPayload, Depends(AccessTokenUtils())]) -> str:
-    await CertificateService().create_certificate(base_certificate=base_certificate, payload=payload)
+                                 TokenPayload, Depends(AccessTokenUtils())]
+                             ) -> str:
+    await CertificateService().create_certificate(base_certificate=base_certificate,
+                                                  background_tasks=background_tasks,
+                                                  payload=payload)
     return "Created user certificate."
 
 
