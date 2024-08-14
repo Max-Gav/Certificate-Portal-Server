@@ -1,5 +1,8 @@
+import os
+
+import httpx
 from fastapi import HTTPException, status
-from models.certificate_route_models.certificate import EditCertificate, BaseCertificate, Certificate
+from models.certificate_route_models.certificate import EditCertificate, BaseCertificate, Certificate, FullCertificate
 from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_repo import CertificateRepo
 from tools.utils.access_token_utils import AccessTokenUtils
@@ -10,13 +13,29 @@ class CertificateService:
     def __init__(self) -> None:
         self._repo = CertificateRepo()
         self.access_token_utils = AccessTokenUtils()
+        self.certificate_operations_service_url = os.getenv(
+            "CERTIFICATE_OPERATIONS_SERVICE_URL") or "http://127.0.0.1:9200"
 
     async def get_certificates(self, payload: TokenPayload) -> list:
         return await self._repo.get_all_certificates(payload["id"])
 
     async def create_certificate(self, base_certificate: BaseCertificate, payload: TokenPayload) -> None:
         certificate = Certificate(user_id=payload["id"], **(base_certificate.model_dump()))
-        await self._repo.create_certificate(certificate=certificate)
+        certificate_objectid = await self._repo.create_certificate(certificate=certificate)
+
+        create_certificate_url = self.certificate_operations_service_url + "/cert-ops/create-certificate"
+
+        full_certificate = FullCertificate(certificate_id=str(certificate_objectid), **(certificate.model_dump()))
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url=create_certificate_url, data=full_certificate.model_dump_json())
+            match response.status_code:
+                case 201:
+                    pass
+                case 400:
+                    raise HTTPException(status_code=400, detail=response.json().get("detail"))
+                case _:
+                    raise HTTPException(status_code=500, detail="Internal Server Error")
 
     async def add_certificate(self, base_certificate: BaseCertificate, payload: TokenPayload) -> None:
         certificate = Certificate(user_id=payload["id"], **(base_certificate.model_dump()))
