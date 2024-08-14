@@ -8,14 +8,16 @@ from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_repo import CertificateRepo
 from tools.utils.access_token_utils import AccessTokenUtils
 from bson.objectid import ObjectId
+from config import Config
+
+
 
 
 class CertificateService:
     def __init__(self) -> None:
         self._repo = CertificateRepo()
         self.access_token_utils = AccessTokenUtils()
-        self.certificate_operations_service_url = os.getenv(
-            "CERTIFICATE_OPERATIONS_SERVICE_URL") or "http://127.0.0.1:9200"
+        self.certificate_operations_service_url = Config.CERTIFICATE_OPERATIONS_SERVICE_URL
 
     async def get_certificates(self, payload: TokenPayload) -> list:
         return await self._repo.get_all_certificates(payload["id"])
@@ -24,7 +26,7 @@ class CertificateService:
         certificate = Certificate(user_id=payload["id"], **(base_certificate.model_dump()))
         certificate_objectid = await self._repo.create_certificate(certificate=certificate)
 
-        create_certificate_url = self.certificate_operations_service_url + "/cert-ops/create-certificate"
+        create_certificate_url = self.certificate_operations_service_url + Config.CREATE_CERTIFICATE_ENDPOINT
 
         full_certificate = FullCertificate(certificate_id=str(certificate_objectid), **(certificate.model_dump()))
 
