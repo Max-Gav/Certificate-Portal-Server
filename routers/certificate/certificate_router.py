@@ -31,7 +31,7 @@ async def create_certificate(base_certificate: BaseCertificate, background_tasks
 @router.post("/add", status_code=status.HTTP_201_CREATED)
 async def add_certificate(base_certificate: BaseCertificate,
                           payload: Annotated[
-                                   TokenPayload, Depends(AccessTokenUtils())]) -> str:
+                              TokenPayload, Depends(AccessTokenUtils())]) -> str:
     await CertificateService().add_certificate(base_certificate=base_certificate, payload=payload)
     return "Added user certificate."
 

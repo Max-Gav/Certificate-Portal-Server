@@ -23,11 +23,11 @@ async def register_user(response: Response, base_user: BaseUser):
 
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def logout_user(response: Response):
-    UserService().logout_user(response=response)
+    UserService.logout_user(response=response)
 
     return "Successfully logged out the user."
 
 
 @router.get("/me", status_code=status.HTTP_200_OK)
 async def me(request: Request) -> TokenPayload:
-    return UserService().me(request=request)
+    return UserService.me(request=request)

@@ -5,6 +5,8 @@ from db.db import MongoConnector
 from models.user_route_models.user import User, BaseUser
 from pymongo.errors import DuplicateKeyError
 from bson.objectid import ObjectId
+
+
 class UserRepo:
     def __init__(self):
         self.db = MongoConnector().db
@@ -19,4 +21,3 @@ class UserRepo:
             return new_user_details.inserted_id
         except DuplicateKeyError:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User is already taken.")
-

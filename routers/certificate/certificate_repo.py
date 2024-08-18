@@ -12,12 +12,11 @@ from tools.utils.general_utils import GeneralUtils
 class CertificateRepo:
     def __init__(self):
         self.db = MongoConnector().db
-        self.general_utils = GeneralUtils()
 
     async def get_all_certificates(self, user_id: str) -> list:
         user_certificates = await self.db["certificates"].find({"user_id": user_id}).to_list(length=None)
         for certificate in user_certificates:
-            self.general_utils.convert_object_id_to_str(certificate)
+            GeneralUtils.convert_object_id_to_str(certificate)
         return user_certificates
 
     async def get_one_certificate(self, cert_id: str) -> ObjectId:

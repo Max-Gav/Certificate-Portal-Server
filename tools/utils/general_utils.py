@@ -1,11 +1,7 @@
-import os
-import aiobcrypt
-import base64
-
-
 # Class that provides general utils.
 class GeneralUtils:
-    def convert_object_id_to_str(self, object):
-        object['id'] = str(object['_id'])
-        del object['_id']
+    @staticmethod
+    def convert_object_id_to_str(current_object):
+        current_object['id'] = str(current_object['_id'])
+        del current_object['_id']
 
