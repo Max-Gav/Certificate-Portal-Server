@@ -1,5 +1,6 @@
 import httpx
 from fastapi import HTTPException, status, BackgroundTasks
+from httpx import Response
 from models.certificate_route_models.edit_certificate import EditCertificate
 from models.certificate_route_models.certificate import CertificateData, CertificateDataUserId, FullCertificateData
 from models.common.token_payload import TokenPayload
@@ -11,6 +12,14 @@ from config import Config
 
 async def send_request_to_create_certificate(create_certificate_url: str, certificate_json: str):
     await httpx.AsyncClient().post(url=create_certificate_url, data=certificate_json)
+async def send_request_to_create_certificate(create_certificate_url: str, certificate_data_json: str):
+    response: Response = await httpx.AsyncClient().post(url=create_certificate_url, data=certificate_data_json)
+
+    if response.status_code != 200:
+        print("Unexpected error occurred creating a certificate using the external service: \n" +
+              response.content.decode("utf-8"))
+
+
 
 
 class CertificateService:
