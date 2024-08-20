@@ -38,8 +38,9 @@ async def add_certificate(base_certificate: BaseCertificate,
 
 
 @router.patch("/edit", status_code=status.HTTP_200_OK)
-async def edit_certificate_details(edit_certificate: EditCertificate, payload: Annotated[
-                                   TokenPayload, Depends(AccessTokenUtils())]) -> str:
+async def edit_certificate_details(edit_certificate: EditCertificate,
+                                   payload: Annotated[
+                                       TokenPayload, Depends(AccessTokenUtils())]) -> str:
     await CertificateService().edit_certificate_details(edit_certificate=edit_certificate, payload=payload)
     return "Edited user certificate."
 
