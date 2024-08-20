@@ -1,6 +1,5 @@
 import httpx
 from fastapi import HTTPException, status, BackgroundTasks
-from models.certificate_route_models.delete_certificate import DeleteCertificate
 from models.certificate_route_models.edit_certificate import EditCertificate
 from models.certificate_route_models.certificate import  BaseCertificate, Certificate, FullCertificate
 from models.common.token_payload import TokenPayload
@@ -53,9 +52,11 @@ class CertificateService:
 
     async def delete_certificate(self, delete_certificate_data: DeleteCertificate, payload: TokenPayload) -> None:
         certificate_id = ObjectId(delete_certificate_data.certificate_id)
+    async def delete_certificate(self, certificate_id: str, payload: TokenPayload) -> None:
+        certificate_object_id = ObjectId(certificate_id)
         user_id = payload["id"]
 
-        delete_user_result = await self._repo.delete_certificate(certificate_id, user_id)
+        delete_user_result = await self._repo.delete_certificate(certificate_object_id, user_id)
 
         if delete_user_result.deleted_count == 0:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No matching certificate found to "
