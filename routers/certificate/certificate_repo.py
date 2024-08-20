@@ -3,7 +3,7 @@ from pymongo.results import UpdateResult, DeleteResult
 from starlette import status
 
 from db.db import MongoConnector
-from models.certificate_route_models.certificate import Certificate
+from models.certificate_route_models.certificate import CertificateDataUserId
 from pymongo.errors import DuplicateKeyError
 from bson.objectid import ObjectId
 from tools.utils.general_utils import GeneralUtils
@@ -23,16 +23,16 @@ class CertificateRepo:
         certificate = await self.db["certificates"].find_one({"_id": ObjectId(cert_id)})
         return certificate
 
-    async def create_certificate(self, certificate: Certificate) -> ObjectId:
+    async def create_certificate(self, certificate_data_user_id: CertificateDataUserId) -> ObjectId:
         try:
-            new_certificate_details = await self.db["certificates"].insert_one(certificate.model_dump())
+            new_certificate_details = await self.db["certificates"].insert_one(certificate_data_user_id.model_dump())
             return new_certificate_details.inserted_id
         except DuplicateKeyError:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Certificate already exists.")
 
-    async def add_certificate(self, certificate: Certificate) -> ObjectId:
+    async def upload_certificate(self, certificate_data_user_id: CertificateDataUserId) -> ObjectId:
         try:
-            new_certificate_details = await self.db["certificates"].insert_one(certificate.model_dump())
+            new_certificate_details = await self.db["certificates"].insert_one(certificate_data_user_id.model_dump())
             return new_certificate_details.inserted_id
         except DuplicateKeyError:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Certificate already exists.")

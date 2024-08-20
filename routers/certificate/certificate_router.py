@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, status, Depends, BackgroundTasks
 
-from models.certificate_route_models.certificate import BaseCertificate
+from models.certificate_route_models.certificate import CertificateData
 from models.certificate_route_models.edit_certificate import EditCertificate
 from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_service import CertificateService
@@ -19,11 +19,11 @@ async def get_certificates(
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_certificate(base_certificate: BaseCertificate, background_tasks: BackgroundTasks,
+async def create_certificate(certificate_data: CertificateData, background_tasks: BackgroundTasks,
                              payload: Annotated[
                                  TokenPayload, Depends(AccessTokenUtils())]
                              ) -> str:
-    await CertificateService().create_certificate(base_certificate=base_certificate,
+    await CertificateService().create_certificate(certificate_data=certificate_data,
                                                   background_tasks=background_tasks,
                                                   payload=payload)
     return "Created user certificate."

@@ -2,8 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-class BaseCertificate(BaseModel):
-    cert_name: str
+class CertificateMetaData(BaseModel):
     common_name: str
     country_name: str
     state_or_province_name: str
@@ -16,10 +15,18 @@ class BaseCertificate(BaseModel):
     expiration_date: datetime
 
 
-class Certificate(BaseCertificate):
+class CertificateData(CertificateMetaData):
+    cert_name: str
+
+
+class CertificateDataUserId(CertificateData):
     user_id: str
 
 
-class FullCertificate(Certificate):
+class CertificateDataCertId(CertificateData):
     certificate_id: str
 
+
+class FullCertificateData(CertificateData):
+    user_id: str
+    certificate_id: str
