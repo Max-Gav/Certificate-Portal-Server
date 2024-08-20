@@ -1,5 +1,7 @@
 import os
 import time
+from typing import Optional
+
 from fastapi import HTTPException, Request, Response, status
 import jwt
 
@@ -58,7 +60,7 @@ class AccessTokenUtils:
 
     # Return the access token data
     @staticmethod
-    def get_access_token_payload(request: Request) -> TokenPayload | None:
+    def get_access_token_payload(request: Request) -> Optional[TokenPayload]:
         access_token = AccessTokenUtils.__get_access_token_from_cookies(request)
 
         if access_token is None:
