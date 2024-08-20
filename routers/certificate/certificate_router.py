@@ -45,9 +45,6 @@ async def edit_certificate_details(edit_certificate: EditCertificate, payload: A
 
 
 @router.delete("/delete", status_code=status.HTTP_200_OK)
-async def delete_certificate(delete_certificate_data: DeleteCertificate, payload: Annotated[
-                             TokenPayload, Depends(AccessTokenUtils())]) -> str:
-    await CertificateService().delete_certificate(delete_certificate_data, payload=payload)
 async def delete_certificate(certificate_id: Annotated[str, Body()],
                              payload: Annotated[
                                  TokenPayload, Depends(AccessTokenUtils())]) -> str:

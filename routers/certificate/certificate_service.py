@@ -34,9 +34,13 @@ class CertificateService:
 
         background_tasks.add_task(send_request_to_create_certificate,
                                   create_certificate_url,
-                                  full_certificate.model_dump_json())
                                   full_certificate_data.model_dump_json())
 
+    async def upload_certificate(self, cert_name: str,
+                                 certificate_file: UploadFile,
+                                 background_tasks: BackgroundTasks,
+                                 payload: TokenPayload) -> None:
+        upload_certificate_url = self.certificate_operations_service_url + Config.UPLOAD_CERTIFICATE_ENDPOINT
 
     async def add_certificate(self, base_certificate: BaseCertificate, payload: TokenPayload) -> None:
         certificate = Certificate(user_id=payload["id"], **(base_certificate.model_dump()))
@@ -53,8 +57,6 @@ class CertificateService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No matching certificate found to "
                                                                               "edit.")
 
-    async def delete_certificate(self, delete_certificate_data: DeleteCertificate, payload: TokenPayload) -> None:
-        certificate_id = ObjectId(delete_certificate_data.certificate_id)
     async def delete_certificate(self, certificate_id: str, payload: TokenPayload) -> None:
         certificate_object_id = ObjectId(certificate_id)
         user_id = payload["id"]
