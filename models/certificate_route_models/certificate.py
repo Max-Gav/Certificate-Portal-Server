@@ -23,11 +23,3 @@ class Certificate(BaseCertificate):
 class FullCertificate(Certificate):
     certificate_id: str
 
-
-class EditCertificate(BaseModel):
-    certificate_id: str
-    cert_name: str
-
-
-class DeleteCertificate(BaseModel):
-    certificate_id: str

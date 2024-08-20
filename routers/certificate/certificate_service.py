@@ -1,7 +1,8 @@
 import httpx
 from fastapi import HTTPException, status, BackgroundTasks
-from models.certificate_route_models.certificate import EditCertificate, BaseCertificate, Certificate, FullCertificate, \
-    DeleteCertificate
+from models.certificate_route_models.delete_certificate import DeleteCertificate
+from models.certificate_route_models.edit_certificate import EditCertificate
+from models.certificate_route_models.certificate import  BaseCertificate, Certificate, FullCertificate
 from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_repo import CertificateRepo
 from tools.utils.access_token_utils import AccessTokenUtils
@@ -10,7 +11,6 @@ from config import Config
 
 
 async def send_request_to_create_certificate(create_certificate_url: str, certificate_json: str):
-    print(certificate_json)
     await httpx.AsyncClient().post(url=create_certificate_url, data=certificate_json)
 
 

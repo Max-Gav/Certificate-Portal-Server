@@ -2,7 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, status, Depends, BackgroundTasks
 
-from models.certificate_route_models.certificate import BaseCertificate, EditCertificate, DeleteCertificate
+from models.certificate_route_models.certificate import BaseCertificate
+from models.certificate_route_models.delete_certificate import DeleteCertificate
+from models.certificate_route_models.edit_certificate import EditCertificate
 from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_service import CertificateService
 from tools.utils.access_token_utils import AccessTokenUtils
