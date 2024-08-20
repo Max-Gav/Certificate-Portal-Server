@@ -1,6 +1,7 @@
 import httpx
-from fastapi import HTTPException, status, BackgroundTasks
+from fastapi import HTTPException, status, BackgroundTasks, UploadFile
 from httpx import Response
+from models.certificate_route_models.upload_certificate import UploadCertificate
 from models.certificate_route_models.edit_certificate import EditCertificate
 from models.certificate_route_models.certificate import CertificateData, CertificateDataUserId, FullCertificateData
 from models.common.token_payload import TokenPayload
@@ -10,8 +11,6 @@ from bson.objectid import ObjectId
 from config import Config
 
 
-async def send_request_to_create_certificate(create_certificate_url: str, certificate_json: str):
-    await httpx.AsyncClient().post(url=create_certificate_url, data=certificate_json)
 async def send_request_to_create_certificate(create_certificate_url: str, certificate_data_json: str):
     response: Response = await httpx.AsyncClient().post(url=create_certificate_url, data=certificate_data_json)
 
@@ -20,6 +19,16 @@ async def send_request_to_create_certificate(create_certificate_url: str, certif
               response.content.decode("utf-8"))
 
 
+async def send_request_to_upload_certificate(upload_certificate_url: str, certificate_file_details: UploadCertificate,
+                                             certificate_file_content: bytes):
+    files = {"pem_file": certificate_file_content}
+    response: Response = await httpx.AsyncClient().post(url=upload_certificate_url,
+                                                        data=certificate_file_details.model_dump(),
+                                                        files=files)
+
+    if response.status_code != 200:
+        print("Unexpected error occurred creating a certificate using the external service: \n" +
+              response.content.decode("utf-8"))
 
 
 class CertificateService:
@@ -51,9 +60,13 @@ class CertificateService:
                                  payload: TokenPayload) -> None:
         upload_certificate_url = self.certificate_operations_service_url + Config.UPLOAD_CERTIFICATE_ENDPOINT
 
-    async def add_certificate(self, base_certificate: BaseCertificate, payload: TokenPayload) -> None:
-        certificate = Certificate(user_id=payload["id"], **(base_certificate.model_dump()))
-        await self._repo.add_certificate(certificate=certificate)
+        certificate_upload_details = UploadCertificate(user_id=payload["id"], cert_name=cert_name)
+        certificate_file_content = await certificate_file.read()
+
+        background_tasks.add_task(send_request_to_upload_certificate,
+                                  upload_certificate_url,
+                                  certificate_upload_details,
+                                  certificate_file_content)
 
     async def edit_certificate_details(self, edit_certificate: EditCertificate, payload: TokenPayload) -> None:
         updated_values = edit_certificate.model_dump(exclude={"certificate_id"})

@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, status, Depends, BackgroundTasks
+from fastapi import APIRouter, status, Depends, BackgroundTasks, UploadFile, Body
 
 from models.certificate_route_models.certificate import CertificateData
 from models.certificate_route_models.edit_certificate import EditCertificate
@@ -29,12 +29,18 @@ async def create_certificate(certificate_data: CertificateData, background_tasks
     return "Created user certificate."
 
 
-@router.post("/add", status_code=status.HTTP_201_CREATED)
-async def add_certificate(base_certificate: BaseCertificate,
-                          payload: Annotated[
-                              TokenPayload, Depends(AccessTokenUtils())]) -> str:
-    await CertificateService().add_certificate(base_certificate=base_certificate, payload=payload)
-    return "Added user certificate."
+@router.post("/upload", status_code=status.HTTP_201_CREATED)
+async def upload_certificate(cert_name: Annotated[str, Body()],
+                             certificate_file: UploadFile,
+                             background_tasks: BackgroundTasks,
+                             payload: Annotated[
+                                 TokenPayload, Depends(AccessTokenUtils())]) -> str:
+    await CertificateService().upload_certificate(cert_name,
+                                                  certificate_file,
+                                                  background_tasks=background_tasks,
+                                                  payload=payload)
+
+    return "Uploaded user certificate."
 
 
 @router.patch("/edit", status_code=status.HTTP_200_OK)
