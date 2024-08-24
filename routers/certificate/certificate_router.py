@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, status, Depends, BackgroundTasks, UploadFile, Body
+from fastapi import APIRouter, status, Depends, BackgroundTasks, UploadFile, Body, Form
 
 from models.certificate_route_models.certificate import CertificateData
 from models.certificate_route_models.edit_certificate import EditCertificate
@@ -29,8 +29,8 @@ async def create_certificate(certificate_data: CertificateData, background_tasks
     return "Created user certificate."
 
 
-@router.post("/upload", status_code=status.HTTP_201_CREATED)
-async def upload_certificate(cert_name: Annotated[str, Body()],
+@router.post("/upload", status_code=status.HTTP_200_OK)
+async def upload_certificate(cert_name: Annotated[str, Form()],
                              certificate_file: UploadFile,
                              background_tasks: BackgroundTasks,
                              payload: Annotated[
