@@ -62,6 +62,7 @@ class CertificateService:
 
         certificate_upload_details = UploadCertificate(user_id=payload["id"], cert_name=cert_name)
         certificate_file_content = await certificate_file.read()
+        await certificate_file.close()
 
         background_tasks.add_task(send_request_to_upload_certificate,
                                   upload_certificate_url,
