@@ -80,10 +80,9 @@ class CertificateService:
                                                                               "edit.")
 
     async def delete_certificate(self, certificate_id: str, payload: TokenPayload) -> None:
-        certificate_object_id = ObjectId(certificate_id)
         user_id = payload["id"]
 
-        delete_user_result = await self._repo.delete_certificate(certificate_object_id, user_id)
+        delete_user_result = await self._repo.delete_certificate(certificate_id, user_id)
 
         if delete_user_result.deleted_count == 0:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No matching certificate found to "

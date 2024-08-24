@@ -12,6 +12,7 @@ from tools.utils.general_utils import GeneralUtils
 class CertificateRepo:
     def __init__(self):
         self.db = MongoConnector().db
+        self.fs = MongoConnector().fs
 
     async def get_all_certificates(self, user_id: str) -> list:
         user_certificates = await self.db["certificates"].find({"user_id": user_id}).to_list(length=None)
@@ -37,13 +38,31 @@ class CertificateRepo:
         except DuplicateKeyError:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Certificate already exists.")
 
-    async def edit_certificate_details(self, certificate_id: ObjectId, updated_values: dict, user_id: str) -> UpdateResult:
+    async def edit_certificate_details(self, certificate_id: ObjectId, updated_values: dict,
+                                       user_id: str) -> UpdateResult:
         edit_result = await self.db["certificates"].update_one(
             {"_id": certificate_id, "user_id": user_id},
             {'$set': updated_values})
         return edit_result
 
-    async def delete_certificate(self, cert_id: ObjectId, user_id: str) -> DeleteResult:
-        delete_user_result = await self.db["certificates"].delete_one({"_id": cert_id, "user_id": user_id})
-        return delete_user_result
+    async def __delete_certificate_file(self, certificate_id: str) -> None:
+        filename = certificate_id + ".pem"
+        fs_cursor = self.fs.find({"filename": filename})
 
+        try:
+            file = (await fs_cursor.to_list(1))[0]
+            await fs_cursor.close()
+            file_object_id = file["_id"]
+            await self.fs.delete(file_object_id)
+        except Exception as e:
+            print("An error occurred while trying to delete the certificate file")
+            print(e)
+
+    async def delete_certificate(self, certificate_id: str, user_id: str) -> DeleteResult:
+        certificate_object_id = ObjectId(certificate_id)
+        delete_user_result = await self.db["certificates"].delete_one({"_id": certificate_object_id,
+                                                                       "user_id": user_id})
+
+        await self.__delete_certificate_file(certificate_id)
+
+        return delete_user_result
