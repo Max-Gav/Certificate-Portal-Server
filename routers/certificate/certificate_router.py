@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, status, Depends, BackgroundTasks, UploadFile, Body, Form
+from fastapi import APIRouter, status, Depends, BackgroundTasks, UploadFile, Body, Form, Response
 
 from models.certificate_route_models.certificate import CertificateData
 from models.certificate_route_models.edit_certificate import EditCertificate
@@ -16,6 +16,17 @@ async def get_certificates(
         payload: Annotated[
             TokenPayload, Depends(AccessTokenUtils())]) -> list:
     return await CertificateService().get_certificates(payload=payload)
+
+
+@router.get("/get-certificate-file/{certificate_id}", status_code=status.HTTP_200_OK)
+async def get_certificate_file(certificate_id: str,
+                               payload: Annotated[TokenPayload, Depends(AccessTokenUtils())]):
+    certificate_filename, certificate_file_content = await CertificateService().get_certificate_file(certificate_id,
+                                                                                                     payload)
+
+    return Response(content=certificate_file_content, media_type="application/octet-stream", headers={
+        "Content-Disposition": f"attachment; filename={certificate_filename}"
+    })
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)

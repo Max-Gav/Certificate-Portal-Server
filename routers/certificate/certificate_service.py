@@ -1,3 +1,5 @@
+from typing import Optional, Tuple
+
 import httpx
 from fastapi import HTTPException, status, BackgroundTasks, UploadFile
 from httpx import Response
@@ -39,6 +41,17 @@ class CertificateService:
 
     async def get_certificates(self, payload: TokenPayload) -> list:
         return await self._repo.get_all_certificates(payload["id"])
+
+    async def get_certificate_file(self, certificate_id, payload: TokenPayload) -> Tuple[str, Optional[bytes]]:
+        result = await self._repo.get_one_certificate(certificate_id=certificate_id, user_id=payload["id"])
+
+        if result is None:
+            return "No File Found", None
+
+        certificate_filename = certificate_id + ".pem"
+        certificate_file_content = await self._repo.get_certificate_file_content(certificate_id)
+
+        return certificate_filename, certificate_file_content
 
     async def create_certificate(self, certificate_data: CertificateData, background_tasks: BackgroundTasks,
                                  payload: TokenPayload) -> None:

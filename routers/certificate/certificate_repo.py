@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import HTTPException
 from pymongo.results import UpdateResult, DeleteResult
 from starlette import status
@@ -37,9 +39,17 @@ class CertificateRepo:
             GeneralUtils.convert_object_id_to_str(certificate)
         return user_certificates
 
-    async def get_one_certificate(self, cert_id: str) -> ObjectId:
-        certificate = await self.db["certificates"].find_one({"_id": ObjectId(cert_id)})
-        return certificate
+    async def get_certificate_file_content(self, certificate_id: str) -> Optional[bytes]:
+        filename = certificate_id + ".pem"
+
+        try:
+            file = await self.fs.open_download_stream_by_name(filename=filename)
+            file_content = await file.read()
+            return file_content
+        except Exception as e:
+            print("An error occurred while trying to get the certificate file content")
+            print(e)
+            return None
 
     async def create_certificate(self, certificate_data_user_id: CertificateDataUserId) -> ObjectId:
         try:
