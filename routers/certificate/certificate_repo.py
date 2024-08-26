@@ -14,6 +14,19 @@ class CertificateRepo:
         self.db = MongoConnector().db
         self.fs = MongoConnector().fs
 
+    async def __find_certificate_file_id(self, certificate_id: str) -> Optional[ObjectId]:
+        filename = certificate_id + ".pem"
+
+        try:
+            fs_cursor = self.fs.find({"filename": filename})
+            file = (await fs_cursor.to_list(1))[0]
+            await fs_cursor.close()
+            return file["_id"]
+        except Exception as e:
+            print("An error occurred while trying to find the certificate file id")
+            print(e)
+            return None
+
     async def get_all_certificates(self, user_id: str) -> list:
         user_certificates = await self.db["certificates"].find({"user_id": user_id}).to_list(length=None)
         for certificate in user_certificates:
@@ -45,24 +58,12 @@ class CertificateRepo:
             {'$set': updated_values})
         return edit_result
 
-    async def __delete_certificate_file(self, certificate_id: str) -> None:
-        filename = certificate_id + ".pem"
-        fs_cursor = self.fs.find({"filename": filename})
-
-        try:
-            file = (await fs_cursor.to_list(1))[0]
-            await fs_cursor.close()
-            file_object_id = file["_id"]
-            await self.fs.delete(file_object_id)
-        except Exception as e:
-            print("An error occurred while trying to delete the certificate file")
-            print(e)
-
     async def delete_certificate(self, certificate_id: str, user_id: str) -> DeleteResult:
         certificate_object_id = ObjectId(certificate_id)
         delete_user_result = await self.db["certificates"].delete_one({"_id": certificate_object_id,
                                                                        "user_id": user_id})
 
-        await self.__delete_certificate_file(certificate_id)
+        certificate_file_id = await self.__find_certificate_file_id(certificate_id)
+        await self.fs.delete(certificate_file_id)
 
         return delete_user_result
