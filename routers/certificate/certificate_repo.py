@@ -29,7 +29,7 @@ class CertificateRepo:
             print(e)
             return None
 
-    async def get_one_certificate(self, certificate_id: str, user_id: str) -> ObjectId:
+    async def get_certificate_by_id(self, certificate_id: str, user_id: str) -> ObjectId:
         certificate = await self.db["certificates"].find_one({"_id": ObjectId(certificate_id), "user_id": user_id})
         return certificate
 

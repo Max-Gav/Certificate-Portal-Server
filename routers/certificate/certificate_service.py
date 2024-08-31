@@ -43,7 +43,7 @@ class CertificateService:
         return await self._repo.get_all_certificates(payload["id"])
 
     async def get_certificate_file(self, certificate_id, payload: TokenPayload) -> Tuple[str, Optional[bytes]]:
-        result = await self._repo.get_one_certificate(certificate_id=certificate_id, user_id=payload["id"])
+        result = await self._repo.get_certificate_by_id(certificate_id=certificate_id, user_id=payload["id"])
 
         if result is None:
             return "No File Found", None
