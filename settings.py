@@ -19,9 +19,9 @@ class Settings(BaseSettings):
     allow_headers: List[str] = ["*"]
 
     jwt_algorithm: str = "HS256"
-    jwt_secret = os.getenv("JWT_SECRET")
-    token_expiry_time_minutes = 30
-    token_expiry_time = token_expiry_time_minutes * 60
+    jwt_secret: str = os.getenv("JWT_SECRET")
+    token_expiry_time_minutes: int = 30
+    token_expiry_time: int = token_expiry_time_minutes * 60
 
     certificate_operations_service_url: str = os.getenv("CERTIFICATE_OPERATIONS_SERVICE_URL", "http://127.0.0.1:9200")
 
