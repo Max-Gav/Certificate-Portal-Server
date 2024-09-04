@@ -38,7 +38,7 @@ class CertificateService:
     def __init__(self) -> None:
         self._repo = CertificateRepo()
         self.access_token_utils = AccessTokenUtils()
-        self.certificate_operations_service_url = settings.CERTIFICATE_OPERATIONS_SERVICE_URL
+        self.certificate_operations_service_url = settings.certificate_operations_service_url
 
     async def get_certificates(self, payload: TokenPayload) -> list:
         return await self._repo.get_all_certificates(payload["id"])

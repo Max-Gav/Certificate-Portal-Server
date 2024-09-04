@@ -9,12 +9,6 @@ from models.common.token_payload import TokenPayload
 from settings import settings
 from jwt.exceptions import DecodeError
 
-# .env variables/ Constants
-JWT_ALGORITHM = settings.jwt_algorithm
-JWT_SECRET = os.getenv("JWT_SECRET")
-EXPIRY_TIME_MINUTES = 30
-EXPIRY_TIME = EXPIRY_TIME_MINUTES * 60  # Seconds
-
 
 # Class that provides access token utilities for creating, encoding, etc.
 class AccessTokenUtils:
@@ -36,13 +30,13 @@ class AccessTokenUtils:
         return TokenPayload(
             id=user_id,
             role=user_role,
-            expiry=time.time() + EXPIRY_TIME
+            expiry=time.time() + settings.token_expiry_time
         )
 
     # Decode an access token
     @staticmethod
     def __decode_access_token(token: str):
-        decoded_token = jwt.decode(jwt=token, key=JWT_SECRET, algorithms=JWT_ALGORITHM)
+        decoded_token = jwt.decode(jwt=token, key=settings.jwt_secret, algorithms=settings.jwt_algorithm)
         return decoded_token
 
     # Get the access token according to the client type
@@ -54,7 +48,7 @@ class AccessTokenUtils:
     @staticmethod
     def create_access_token(user_id: str, user_role: str) -> str:
         payload = AccessTokenUtils.__access_token_payload_builder(user_id, user_role)
-        token = jwt.encode(payload=dict(payload), key=JWT_SECRET, algorithm=JWT_ALGORITHM)
+        token = jwt.encode(payload=dict(payload), key=settings.jwt_secret, algorithm=settings.jwt_algorithm)
         return token
 
     # Return the access token data
@@ -72,7 +66,7 @@ class AccessTokenUtils:
     @staticmethod
     def set_access_token_in_cookies(response: Response, access_token: str) -> None:
         response.set_cookie(key='access-token', value=access_token, httponly=True, secure=True, samesite='none',
-                            max_age=EXPIRY_TIME)
+                            max_age=settings.token_expiry_time)
 
     # Remove the access token from the cookies
     @staticmethod
