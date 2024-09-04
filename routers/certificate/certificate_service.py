@@ -12,6 +12,8 @@ from tools.utils.access_token_utils import AccessTokenUtils
 from bson.objectid import ObjectId
 from config import Config
 
+from settings import settings
+
 
 async def send_request_to_create_certificate(create_certificate_url: str, certificate_data_json: str):
     response: Response = await httpx.AsyncClient().post(url=create_certificate_url, data=certificate_data_json)
@@ -37,7 +39,7 @@ class CertificateService:
     def __init__(self) -> None:
         self._repo = CertificateRepo()
         self.access_token_utils = AccessTokenUtils()
-        self.certificate_operations_service_url = Config.CERTIFICATE_OPERATIONS_SERVICE_URL
+        self.certificate_operations_service_url = settings.CERTIFICATE_OPERATIONS_SERVICE_URL
 
     async def get_certificates(self, payload: TokenPayload) -> list:
         return await self._repo.get_all_certificates(payload["id"])

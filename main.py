@@ -4,14 +4,13 @@ import uvicorn
 import logging
 
 from fastapi import APIRouter, FastAPI
-from settings import Settings
+from settings import settings
 from routers.certificate import certificate_router
 from routers.user import user_router
 from db.db import MongoConnector
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Certmax")
-settings = Settings()
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:     %(message)s')
 

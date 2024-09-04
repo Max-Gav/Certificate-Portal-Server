@@ -6,11 +6,10 @@ from fastapi import HTTPException, Request, Response, status
 import jwt
 
 from models.common.token_payload import TokenPayload
-from settings import Settings
+from settings import settings
 from jwt.exceptions import DecodeError
 
 # .env variables/ Constants
-settings = Settings()
 JWT_ALGORITHM = settings.jwt_algorithm
 JWT_SECRET = os.getenv("JWT_SECRET")
 EXPIRY_TIME_MINUTES = 30
