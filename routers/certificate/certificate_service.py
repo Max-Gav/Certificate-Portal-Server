@@ -10,7 +10,7 @@ from models.common.token_payload import TokenPayload
 from routers.certificate.certificate_repo import CertificateRepo
 from tools.utils.access_token_utils import AccessTokenUtils
 from bson.objectid import ObjectId
-from config.service_endpoints import ServiceEndpoints
+from config.api_routes import APIRoutes
 from settings import settings
 
 
@@ -59,7 +59,7 @@ class CertificateService:
         certificate_data_user_id = CertificateDataUserId(user_id=payload["id"], **(certificate_data.model_dump()))
         certificate_object_id = await self._repo.create_certificate(certificate_data_user_id=certificate_data_user_id)
 
-        create_certificate_url = self.certificate_operations_service_url + ServiceEndpoints.CREATE_CERTIFICATE_ENDPOINT
+        create_certificate_url = self.certificate_operations_service_url + APIRoutes.CREATE_CERTIFICATE_ROUTE
 
         full_certificate_data = FullCertificateData(certificate_id=str(certificate_object_id),
                                                     **(certificate_data_user_id.model_dump()))
@@ -72,7 +72,7 @@ class CertificateService:
                                  certificate_file: UploadFile,
                                  background_tasks: BackgroundTasks,
                                  payload: TokenPayload) -> None:
-        upload_certificate_url = self.certificate_operations_service_url + ServiceEndpoints.UPLOAD_CERTIFICATE_ENDPOINT
+        upload_certificate_url = self.certificate_operations_service_url + APIRoutes.UPLOAD_CERTIFICATE_ROUTE
 
         certificate_upload_details = UploadCertificate(user_id=payload["id"], cert_name=cert_name)
         certificate_file_content = await certificate_file.read()
