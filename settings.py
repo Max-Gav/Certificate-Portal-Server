@@ -11,14 +11,19 @@ class Settings(BaseSettings):
     port: int = 9000
     reload: bool = False
 
-    allow_origins: List[str] = ["http://localhost:5173"] if is_dev else ["http://localhost:5173","http://127.0.0.1:5173", "http://0.0.0.0:5173","http://localhost:8080", "*"]
+    allow_origins: List[str] = ["http://localhost:5173"] if is_dev else ["http://localhost:5173",
+                                                                         "http://127.0.0.1:5173", "http://0.0.0.0:5173",
+                                                                         "http://localhost:8080", "*"]
     allow_methods: List[str] = ["*"]
     allow_credentials: bool = True
     allow_headers: List[str] = ["*"]
 
     jwt_algorithm: str = "HS256"
+    jwt_secret = os.getenv("JWT_SECRET")
+    token_expiry_time_minutes = 30
+    token_expiry_time = token_expiry_time_minutes * 60
 
-    CERTIFICATE_OPERATIONS_SERVICE_URL:str = os.getenv("CERTIFICATE_OPERATIONS_SERVICE_URL", "http://127.0.0.1:9200")
+    certificate_operations_service_url: str = os.getenv("CERTIFICATE_OPERATIONS_SERVICE_URL", "http://127.0.0.1:9200")
 
 
 settings = Settings()
